@@ -52,5 +52,5 @@ Mkfile.old
 dkms.conf
 
 #rar
-/*.rar
-/.vscode
+*.rar
+\.vscode
