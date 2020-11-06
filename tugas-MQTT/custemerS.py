@@ -21,15 +21,44 @@ def print_menu():
         "===================================\n",
         "Enter a choice and press enter: ", sep= "")
 
+def on_connect(client, userdata, flag, rc):
+    print("Connected with result code "+str(rc))
+
+def printTrans(client, obj, msg):
+    print(msg.payload)
+
+
+# binding to RPC server
+customer= zerorpc.Client()
+
+# connect to mqtt broker 
+customerM = mqtt.Client(client_id="custommerS", clean_session= False)
+customerM.connect("127.0.0.1", port= 1883)
+
+# daftar callback function
+customerM.on_connect= on_connect
+customerM.on_message= printTrans
+
 try:
-    # binding to server
-    customer= zerorpc.Client()
+    # connect to RPC server
     customer.bind("tcp://127.0.1.1:3344")
-    # cek koneksi server
+    
+    # subcribe to MQTT publisher
+    customerM.subscribe("/seller/print", qos=1)
+
+    # cek koneksi server RPC
     print(customer.test())
+    
+    #print menu
     print_menu()
+    
+    #get user input
     cInput = int(input(""))
+
     # print hasil transaksi menggunakan protokol RCPC
     # print(customer.getInput(cInput, debit))
+
+    #print hasl transaksi menggunakan protokol MQTT
+    
 except KeyboardInterrupt:
     print("Closing Client")
